@@ -36,10 +36,11 @@ export class SelectorPageComponent implements OnInit {
     this.form.get('region')?.valueChanges
     .pipe(
       switchMap(region => this.countriesService.getCountriesByRegion(region)),
-      tap( country => country.sort( (a,b) => a.name.localeCompare(b.name))),
+      tap( country => country.sort( (a,b) => a.name.localeCompare(b.name)))
     )
     .subscribe(countires => {
       this.countriesByRegion = countires;
+      this.form.get('country')?.setValue('');
     })
   }
 

@@ -11,6 +11,16 @@
             </select>
         </div>
     </div>
+
+    <div *ngIf="countriesByRegion.length > 0" class="row mb-3">
+      <div class="col">
+          <label for="" class="form-label">País:</label>
+          <select formControlName="region" name="" id="" class="form-control">
+              <option value="">- Seleccionar -</option>
+              <option *ngFor="let country of countriesByRegion" [value]="country.cca3">{{ country.name }}</option>
+          </select>
+      </div>
+  </div>
 </form>
 
 <h3>Formulario</h3>

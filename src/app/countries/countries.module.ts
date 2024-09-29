@@ -5,7 +5,6 @@ import { CountriesRoutingModule } from './countries-routing.module';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
-
 @NgModule({
   declarations: [
     SelectorPageComponent

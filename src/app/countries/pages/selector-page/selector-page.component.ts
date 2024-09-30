@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CountriesService } from '../../services/country.service';
 import { Region, SmallCountry } from '../../interfaces/country.interface';
-import { switchMap, tap } from 'rxjs';
+import { filter, switchMap, tap } from 'rxjs';
 
 @Component({
   selector: 'app-selector-page',
@@ -12,6 +12,7 @@ import { switchMap, tap } from 'rxjs';
 export class SelectorPageComponent implements OnInit {
 
   public countriesByRegion: SmallCountry[] = [];
+  public countriesBorders:  SmallCountry[]  = [];
 
   public form: FormGroup = this.formBuilder.group({
     region: ['', Validators.required],
@@ -26,6 +27,7 @@ export class SelectorPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.onChangeRegion();
+    this.onChangeCountry();
   }
 
   get regions(): Region[] {
@@ -39,9 +41,29 @@ export class SelectorPageComponent implements OnInit {
       tap( country => country.sort( (a,b) => a.name.localeCompare(b.name)))
     )
     .subscribe(countires => {
+      if(countires.length == 0) this.clearAllForms();
+
       this.countriesByRegion = countires;
       this.form.get('country')?.setValue('');
     })
+  }
+
+  onChangeCountry() {
+    this.form.get('country')?.valueChanges
+    .pipe(
+      filter((value: string) => value.length > 0),
+      switchMap( (alpha) => this.countriesService.getCountryByAlphaCode(alpha)),
+      switchMap( (country) => this.countriesService.getCountryBorderByCodes( country.borders ))
+    )
+    .subscribe(countries => {
+      this.countriesBorders = countries;
+      this.form.get('borders')?.setValue('');
+    })
+  }
+
+  clearAllForms() {
+    this.countriesByRegion = [];
+    this.countriesBorders = [];
   }
 
 
